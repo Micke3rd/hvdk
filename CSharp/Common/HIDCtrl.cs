@@ -139,7 +139,7 @@ namespace Hvdk.Common
 		{
 			if (OnLog != null)
 			{
-				LogArgs args = new LogArgs();
+				var args = new LogArgs();
 				args.Msg = Msg;
 				OnLog(this, args);
 			}
@@ -157,47 +157,47 @@ namespace Hvdk.Common
 
 			HidD_GetHidGuid(out HIDGuid);
 
-			IntPtr PnPHandle = SetupDiGetClassDevs(ref HIDGuid, IntPtr.Zero, IntPtr.Zero, (int)(DiGetClassFlags.DIGCF_PRESENT | DiGetClassFlags.DIGCF_DEVICEINTERFACE));
+			var PnPHandle = SetupDiGetClassDevs(ref HIDGuid, IntPtr.Zero, IntPtr.Zero, (int)(DiGetClassFlags.DIGCF_PRESENT | DiGetClassFlags.DIGCF_DEVICEINTERFACE));
 			if (PnPHandle == (IntPtr)INVALID_HANDLE_VALUE)
 			{
 				DoLog("Connect: SetupDiGetClassDevs failed.");
 				return;
 			}
 
-			bool bFoundMyDevice = false;
+			var bFoundMyDevice = false;
 			uint i = 0;
 
 			//we coudld use a lot more failure and exception logging during this loop
 			bool bFoundADevice;
 			do
 			{
-				SP_DEVICE_INTERFACE_DATA DevInterfaceData = new SP_DEVICE_INTERFACE_DATA();
+				var DevInterfaceData = new SP_DEVICE_INTERFACE_DATA();
 				DevInterfaceData.cbSize = (uint)Marshal.SizeOf(DevInterfaceData);
 				bFoundADevice = SetupDiEnumDeviceInterfaces(PnPHandle, IntPtr.Zero, ref HIDGuid, i, ref DevInterfaceData);
 				if (bFoundADevice)
 				{
-					SP_DEVINFO_DATA DevInfoData = new SP_DEVINFO_DATA();
+					var DevInfoData = new SP_DEVINFO_DATA();
 					DevInfoData.cbSize = (uint)Marshal.SizeOf(DevInfoData);
-					bool result3 = SetupDiGetDeviceInterfaceDetail(PnPHandle, DevInterfaceData, IntPtr.Zero, 0, out var needed, DevInfoData);
+					var result3 = SetupDiGetDeviceInterfaceDetail(PnPHandle, DevInterfaceData, IntPtr.Zero, 0, out var needed, DevInfoData);
 					if (!result3)
 					{
-						int error = Marshal.GetLastWin32Error();
+						var error = Marshal.GetLastWin32Error();
 						if (error == 122)
 						{
 							//it's supposed to give an error 122 as we just only retrieved the data size needed, so this is as designed
-							IntPtr DeviceInterfaceDetailData = Marshal.AllocHGlobal((int)needed);
+							var DeviceInterfaceDetailData = Marshal.AllocHGlobal((int)needed);
 							try
 							{
-								uint size = needed;
+								var size = needed;
 								Marshal.WriteInt32(DeviceInterfaceDetailData, IntPtr.Size == 8 ? 8 : 6);
-								bool result4 = SetupDiGetDeviceInterfaceDetail(PnPHandle, DevInterfaceData, DeviceInterfaceDetailData, size, out needed, DevInfoData);
+								var result4 = SetupDiGetDeviceInterfaceDetail(PnPHandle, DevInterfaceData, DeviceInterfaceDetailData, size, out needed, DevInfoData);
 								if (!result4)
 								{
 									//shouldn't be an error here
-									int error1 = Marshal.GetLastWin32Error();
+									var error1 = Marshal.GetLastWin32Error();
 									//todo: go +1 and contine the loop...this exception handing is incomplete
 								}
-								IntPtr pDevicePathName = new IntPtr(DeviceInterfaceDetailData.ToInt64() + 4);
+								var pDevicePathName = new IntPtr(DeviceInterfaceDetailData.ToInt64() + 4);
 								FDevicePathName = Marshal.PtrToStringAuto(pDevicePathName);
 								//see if this driver has readwrite access
 								FDevHandle = CreateFile(FDevicePathName, System.IO.FileAccess.ReadWrite, System.IO.FileShare.ReadWrite, IntPtr.Zero, System.IO.FileMode.Open, 0, IntPtr.Zero);
@@ -208,9 +208,9 @@ namespace Hvdk.Common
 								if (!FDevHandle.IsInvalid)
 								{
 									//this device has readwrite access, could it be the device we are looking for?
-									HIDD_ATTRIBUTES HIDAttributes = new HIDD_ATTRIBUTES();
+									var HIDAttributes = new HIDD_ATTRIBUTES();
 									HIDAttributes.Size = Marshal.SizeOf(HIDAttributes);
-									bool success = HidD_GetAttributes(FDevHandle, ref HIDAttributes);
+									var success = HidD_GetAttributes(FDevHandle, ref HIDAttributes);
 									if (success && HIDAttributes.VendorID == VendorID && HIDAttributes.ProductID == ProductID)
 									{
 										//this is the device we are looking for
@@ -257,7 +257,7 @@ namespace Hvdk.Common
 		//send data to the driver
 		public bool SendData(byte[] Buffer, uint BufferLength)
 		{
-			bool res = false;
+			var res = false;
 			if (Connected)
 			{
 				res = HidD_SetFeature(FDevHandle, Buffer, BufferLength + 1);
@@ -269,14 +269,14 @@ namespace Hvdk.Common
 		//in this example, we oversimplified the possible effects of overlapped data reads since readfilex is asynchronous
 		public bool ReadData(byte[] Buffer, uint BufferLength)
 		{
-			bool res = false;
+			var res = false;
 			if (Connected)
 			{
 				if (!FDevHandle.IsInvalid)
 				{
 					var overlapped = new NativeOverlapped();
 					overlapped.EventHandle = IntPtr.Zero;
-					bool res1 = ReadFileEx(FDevHandle, Buffer, BufferLength, ref overlapped, IntPtr.Zero);
+					var res1 = ReadFileEx(FDevHandle, Buffer, BufferLength, ref overlapped, IntPtr.Zero);
 					res = true;
 				}
 			}

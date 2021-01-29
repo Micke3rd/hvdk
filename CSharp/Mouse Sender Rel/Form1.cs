@@ -47,7 +47,7 @@ namespace App
         //here we send data to the mouse
         void Send_Data_To_MouseRel(bool ignoreMove)
         {
-            SetFeatureMouseRel MouseRelData = new SetFeatureMouseRel();
+            var MouseRelData = new SetFeatureMouseRel();
             MouseRelData.ReportID = 1;
             MouseRelData.CommandCode = 2;
             byte btns = 0;
@@ -61,7 +61,7 @@ namespace App
                 MouseRelData.Y = (sbyte)spnY.Value;
             }
             //convert struct to buffer
-            byte[] buf = getBytesSFJ(MouseRelData, Marshal.SizeOf(MouseRelData));
+            var buf = getBytesSFJ(MouseRelData, Marshal.SizeOf(MouseRelData));
             //send filled buffer to driver
             HID.SendData(buf, (uint)Marshal.SizeOf(MouseRelData));
         }
@@ -69,8 +69,8 @@ namespace App
         //for converting a struct to byte array
         public static byte[] getBytesSFJ(SetFeatureMouseRel sfj, int size)
         {
-            byte[] arr = new byte[size];
-            IntPtr ptr = Marshal.AllocHGlobal(size);
+            var arr = new byte[size];
+            var ptr = Marshal.AllocHGlobal(size);
             Marshal.StructureToPtr(sfj, ptr, false);
             Marshal.Copy(ptr, arr, 0, size);
             Marshal.FreeHGlobal(ptr);

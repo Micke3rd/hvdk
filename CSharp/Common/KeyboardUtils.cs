@@ -5,21 +5,8 @@ using System.Text;
 
 namespace Hvdk.Common
 {
-	public static class KbUtils
+	public static class KeyboardUtils
 	{
-
-		[DllImport("user32.dll")]
-		static extern IntPtr GetForegroundWindow();
-
-		[DllImport("USER32.DLL")]
-		static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
-
-		[DllImport("user32.dll", SetLastError = true)]
-		static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
-		[DllImport("user32.dll")]
-		static extern bool SetForegroundWindow(IntPtr hWnd);
-
 		static List<string> _FKeys;
 		static List<string> FKeys
 		{
@@ -168,37 +155,13 @@ namespace Hvdk.Common
 			}
 		}
 
-
-		public static void AppActivate(string Name, int PauseAfterActivation)
-		{
-			if (string.IsNullOrWhiteSpace(Name))
-				throw new ArgumentException($"'{nameof(Name)}' cannot be null or whitespace", nameof(Name));
-
-			//is it already the foreground window?
-			IntPtr selectedWindow = GetForegroundWindow();
-			StringBuilder WinCaptionEx = new StringBuilder(260);
-			GetWindowText(selectedWindow, WinCaptionEx, WinCaptionEx.Capacity);
-			if (WinCaptionEx.ToString() == Name)
-				return;
-			else
-			{
-				IntPtr w = FindWindow(null, Name);
-				if (w != IntPtr.Zero)
-				{
-					SetForegroundWindow(w);
-					System.Threading.Thread.Sleep(PauseAfterActivation);
-					return;
-				}
-			}
-		}
-
 		//keys and modifers must be converted to keycodes
 		//this is based specs in /common/hut1_12v2.pdf
 		//special keycodes for modifiers like shift and control
 
 		public static byte GetModifierKeyCode(string modifier)
 		{
-			int i = FModifiers.IndexOf(modifier);
+			var i = FModifiers.IndexOf(modifier);
 			if (i == -1) { return 0; } else { return (byte)i; };
 		}
 
@@ -207,7 +170,7 @@ namespace Hvdk.Common
 		{
 			if (key.Length == 1)
 				key = key.ToLower();
-			int i = FKeys.IndexOf(key);
+			var i = FKeys.IndexOf(key);
 			if (i == -1) { return 0; } else { return (byte)i; };
 		}
 

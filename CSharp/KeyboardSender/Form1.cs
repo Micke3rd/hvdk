@@ -43,7 +43,7 @@ namespace KeyboardSender
         //here we send data to the keyboard driver
         void Send(byte Modifier, byte Padding, byte Key0, byte Key1, byte Key2, byte Key3, byte Key4, byte Key5)
         {
-            SetFeatureKeyboard KeyboardData = new SetFeatureKeyboard();
+            var KeyboardData = new SetFeatureKeyboard();
             KeyboardData.ReportID = 1;
             KeyboardData.CommandCode = 2;
             KeyboardData.Timeout = FTimeout / 5; //5 because we count in blocks of 5 in the driver
@@ -57,7 +57,7 @@ namespace KeyboardSender
             KeyboardData.Key4 = Key4;
             KeyboardData.Key5 = Key5;
             //convert struct to buffer
-            byte[] buf = getBytesSFJ(KeyboardData, Marshal.SizeOf(KeyboardData));
+            var buf = getBytesSFJ(KeyboardData, Marshal.SizeOf(KeyboardData));
             //send filled buffer to driver
             HID.SendData(buf, (uint)Marshal.SizeOf(KeyboardData));
         }
@@ -65,8 +65,8 @@ namespace KeyboardSender
         //for converting a struct to byte array
         public static byte[] getBytesSFJ(SetFeatureKeyboard sfj, int size)
         {
-            byte[] arr = new byte[size];
-            IntPtr ptr = Marshal.AllocHGlobal(size);
+            var arr = new byte[size];
+            var ptr = Marshal.AllocHGlobal(size);
             Marshal.StructureToPtr(sfj, ptr, false);
             Marshal.Copy(ptr, arr, 0, size);
             Marshal.FreeHGlobal(ptr);
@@ -83,7 +83,7 @@ namespace KeyboardSender
         //here we send a ping to the keyboard driver
         void Ping()
         {
-            SetFeatureKeyboard KeyboardData = new SetFeatureKeyboard();
+            var KeyboardData = new SetFeatureKeyboard();
             KeyboardData.ReportID = 1;
             KeyboardData.CommandCode = 3;
             //the timeout is how long the driver will wait (milliseconds) without receiving a ping before resetting itself
@@ -100,7 +100,7 @@ namespace KeyboardSender
             KeyboardData.Key4 = 0;
             KeyboardData.Key5 = 0;
             //convert struct to buffer
-            byte[] buf = getBytesSFJ(KeyboardData, Marshal.SizeOf(KeyboardData));
+            var buf = getBytesSFJ(KeyboardData, Marshal.SizeOf(KeyboardData));
             //send filled buffer to driver
             HID.SendData(buf, (uint)Marshal.SizeOf(KeyboardData));
         }
@@ -109,7 +109,7 @@ namespace KeyboardSender
         {
 			SetTarget();
 			//here we resolve the 'a' to be a keycode of 4 by using the keycode list
-			byte k = KbUtils.GetKeyKeyCode("a");
+			var k = KeyboardUtils.GetKeyKeyCode("a");
             if (k > 0)
             {
                 Send(0, 0, k, 0, 0, 0, 0, 0);
@@ -124,7 +124,7 @@ namespace KeyboardSender
         {
 			SetTarget();
             //here we resolve the 'a' to be a keycode of 4 by using the keycode list
-            byte k = KbUtils.GetKeyKeyCode("a");
+            var k = KeyboardUtils.GetKeyKeyCode("a");
             if (k > 0)
             {
                 Send(0, 0, k, 0, 0, 0, 0, 0);
@@ -166,8 +166,8 @@ namespace KeyboardSender
         private void button6_Click(object sender, EventArgs e)
         {
 			SetTarget();
-            byte k1 = KbUtils.GetKeyKeyCode("a");
-            byte k2 = KbUtils.GetKeyKeyCode("b");
+            var k1 = KeyboardUtils.GetKeyKeyCode("a");
+            var k2 = KeyboardUtils.GetKeyKeyCode("b");
             if ((k1 > 0) && (k2 > 0))
             {
                 //you can press up to six keys (not including modifiers) simultaneously.
@@ -193,13 +193,13 @@ namespace KeyboardSender
             byte m1;
             byte k1;
             //iterate through the text.  We'll send one character at a time
-            for (int i = 0; i < text.Length; i++)
+            for (var i = 0; i < text.Length; i++)
             {
-                char t = text[i];
+                var t = text[i];
                 //check for uppercase letters
                 if (t == char.ToUpper(t))
                 {
-                    m = KbUtils.GetModifierKeyCode("[LSHIFT]");
+                    m = KeyboardUtils.GetModifierKeyCode("[LSHIFT]");
                 }
                 else
                 {
@@ -225,7 +225,7 @@ namespace KeyboardSender
                     default: m1 = 0; break;
                 }
                 //the keycode is the same whether it is capitalized or not
-                k1 = KbUtils.GetKeyKeyCode(char.ToLower(t).ToString());
+                k1 = KeyboardUtils.GetKeyKeyCode(char.ToLower(t).ToString());
                 if (k1 > 0)
                 {
                     //pressing the key down
@@ -258,7 +258,7 @@ namespace KeyboardSender
 			//we could just dump the text to the editbox on the main form, but they sleep delays will give odd effects and cause key repeats to not look correct since
 			//the main thread is sleeping, the ui isn't updated with the keystrokes until the sleep is finished.
 			//tbLog.Focus();  
-			KbUtils.AppActivate("Tetherscript Virtual Keyboard Driver Reader", 300);
+			User32.AppActivate("Tetherscript Virtual Keyboard Driver Reader", 300);
         }
     
     }

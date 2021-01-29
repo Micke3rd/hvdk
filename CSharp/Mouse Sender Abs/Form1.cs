@@ -47,7 +47,7 @@ namespace App
         //here we send data to the mouse
         void Send_Data_To_MouseAbs()
         {
-            SetFeatureMouseAbs MouseAbsData = new SetFeatureMouseAbs();
+            var MouseAbsData = new SetFeatureMouseAbs();
             MouseAbsData.ReportID = 1;
             MouseAbsData.CommandCode = 2;
             byte btns = 0;
@@ -58,7 +58,7 @@ namespace App
             MouseAbsData.X = (ushort)spnX.Value;
             MouseAbsData.Y = (ushort)spnY.Value;
             //convert struct to buffer
-            byte[] buf = getBytesSFJ(MouseAbsData, Marshal.SizeOf(MouseAbsData));
+            var buf = getBytesSFJ(MouseAbsData, Marshal.SizeOf(MouseAbsData));
             //send filled buffer to driver
             HID.SendData(buf, (uint)Marshal.SizeOf(MouseAbsData));
         }
@@ -66,8 +66,8 @@ namespace App
         //for converting a struct to byte array
         public static byte[] getBytesSFJ(SetFeatureMouseAbs sfj, int size)
         {
-            byte[] arr = new byte[size];
-            IntPtr ptr = Marshal.AllocHGlobal(size);
+            var arr = new byte[size];
+            var ptr = Marshal.AllocHGlobal(size);
             Marshal.StructureToPtr(sfj, ptr, false);
             Marshal.Copy(ptr, arr, 0, size);
             Marshal.FreeHGlobal(ptr);

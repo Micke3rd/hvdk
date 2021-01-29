@@ -61,7 +61,7 @@ namespace JoystickSenderAndReader
         //here we send data to the joystick
         void Send_Data_To_Joystick()
         {
-            SetFeatureJoy JoyData = new SetFeatureJoy();
+            var JoyData = new SetFeatureJoy();
             JoyData.ReportID = 1;
             JoyData.CommandCode = 2;
             JoyData.X = (ushort)slX.Value;
@@ -92,7 +92,7 @@ namespace JoystickSenderAndReader
             JoyData.btn15 = 0;
             if (cb128.IsChecked == true) { JoyData.btn15 = (byte)(JoyData.btn15 | (1 << 0)); }
             //convert struct to buffer
-            byte[] buf = getBytesSFJ(JoyData, Marshal.SizeOf(JoyData));
+            var buf = getBytesSFJ(JoyData, Marshal.SizeOf(JoyData));
             //send filled buffer to driver
             HID.SendData(buf, (uint)Marshal.SizeOf(JoyData));
         }
@@ -100,12 +100,12 @@ namespace JoystickSenderAndReader
         //here we get data from the joystick
         void Get_Data_From_Joystick()
         {
-            GetDataJoy JoyData = new GetDataJoy();
+            var JoyData = new GetDataJoy();
             //convert struct to buffer
-            byte[] buf = getBytesGDJ(JoyData, Marshal.SizeOf(JoyData));
+            var buf = getBytesGDJ(JoyData, Marshal.SizeOf(JoyData));
             //send empty buffer to driver
             HID.ReadData(buf, (uint)Marshal.SizeOf(JoyData));
-            GetDataJoy jd= fromBytes(buf);
+            var jd= fromBytes(buf);
             pbX.Value = jd.X;
             pbY.Value = jd.Y;
             pbZ.Value = jd.Z;
@@ -141,8 +141,8 @@ namespace JoystickSenderAndReader
         //for converting a struct to byte array
         public static byte[] getBytesSFJ(SetFeatureJoy sfj, int size)
         {
-            byte[] arr = new byte[size];
-            IntPtr ptr = Marshal.AllocHGlobal(size);
+            var arr = new byte[size];
+            var ptr = Marshal.AllocHGlobal(size);
             Marshal.StructureToPtr(sfj, ptr, false);
             Marshal.Copy(ptr, arr, 0, size);
             Marshal.FreeHGlobal(ptr);
@@ -152,8 +152,8 @@ namespace JoystickSenderAndReader
         //for converting a struct to byte array
         public static byte[] getBytesGDJ(GetDataJoy gdj, int size)
         {
-            byte[] arr = new byte[size];
-            IntPtr ptr = Marshal.AllocHGlobal(size);
+            var arr = new byte[size];
+            var ptr = Marshal.AllocHGlobal(size);
             Marshal.StructureToPtr(gdj, ptr, false);
             Marshal.Copy(ptr, arr, 0, size);
             Marshal.FreeHGlobal(ptr);
@@ -163,9 +163,9 @@ namespace JoystickSenderAndReader
 		//for converting a byte array to struct
 		static GetDataJoy fromBytes(byte[] arr)
         {
-            GetDataJoy str = new GetDataJoy();
-            int size = Marshal.SizeOf(str);
-            IntPtr ptr = Marshal.AllocHGlobal(size);
+            var str = new GetDataJoy();
+            var size = Marshal.SizeOf(str);
+            var ptr = Marshal.AllocHGlobal(size);
             Marshal.Copy(arr, 0, ptr, size);
             str = (GetDataJoy)Marshal.PtrToStructure(ptr, str.GetType());
             Marshal.FreeHGlobal(ptr);
