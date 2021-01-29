@@ -249,6 +249,7 @@ namespace Hvdk.Common
 		}
 		public void Dispose() { 
 			Disconnect();
+
 			GC.SuppressFinalize(this);
 		}
 
