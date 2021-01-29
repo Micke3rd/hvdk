@@ -1,9 +1,8 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace Hvdk.Common
 {
-    public enum DriversConst : ushort
+	public enum DriversConst : ushort
     {
         TTC_VENDORID = 0xF00F,
         TTC_PRODUCTID_JOYSTICK = 0x00000001,

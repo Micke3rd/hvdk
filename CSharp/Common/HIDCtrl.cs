@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.IO;
 using System.Threading;
-using System.Runtime.CompilerServices;
 
 //this is the minimal amount of code to allow reading from and writing to the device driver.
 //you should consider using a thread for your reading (and maybe writing) code.
