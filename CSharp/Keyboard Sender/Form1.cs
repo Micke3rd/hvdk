@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace App
+namespace KeyboardSender
 {
 
 	//create the HIDController object

@@ -1,4 +1,4 @@
-﻿namespace App
+﻿namespace KeyboardSender
 {
     partial class Form1
     {
