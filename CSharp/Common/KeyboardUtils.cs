@@ -205,6 +205,8 @@ namespace Hvdk.Common
 
 		public static byte GetKeyKeyCode(string key)
 		{
+			if (key.Length == 1)
+				key = key.ToLower();
 			int i = FKeys.IndexOf(key);
 			if (i == -1) { return 0; } else { return (byte)i; };
 		}
