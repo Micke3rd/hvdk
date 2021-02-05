@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Hvdk.Common
 {
-	public static class User32
+	public static partial class User32
 	{
 		private const string _user32Dll = "user32.dll";
 

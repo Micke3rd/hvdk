@@ -2,6 +2,7 @@
 
   <PropertyGroup>
 	  <OutputType>Library</OutputType>
+	  <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
 </Project>
