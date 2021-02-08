@@ -4,82 +4,121 @@ using Hvdk.Common;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System;
+using System.Linq;
 
 namespace UnitTests
 {
 	[TestClass]
 	public class UnitTestUnicode
-
 	{
+		CultureInfo _arabic = CultureInfo.GetCultureInfo("ar-EG");
 		[TestMethod]
-		public void Test1()
+		public void TestArabicKeyboard()
 		{
-			var old = CultureInfo.CurrentCulture;
-			var actual = User32.KeyCodeToUnicode(System.Windows.Forms.Keys.Oem3);
+			CheckIfKeyboardLayoutIsInstalled(_arabic);
+
+			var actual = User32.KeyCodeToUnicode(Key.Oem1);
+			Assert.AreEqual("ك", actual);
+			actual = User32.KeyCodeToUnicode(Key.Oem3);
+			Assert.AreEqual("ذ", actual);
+			actual = User32.KeyCodeToUnicode(Key.Oem7);
+			Assert.AreEqual("ط", actual);
+		}
+
+
+		CultureInfo _german = CultureInfo.GetCultureInfo("de-DE");
+		[TestMethod]
+		public void TestGermanKeyboard			()
+		{
+			CheckIfKeyboardLayoutIsInstalled(_german);
+
+			var actual = User32.KeyCodeToUnicode(Key.Oem1);
+			Assert.AreEqual("ü", actual);
+			actual = User32.KeyCodeToUnicode(Key.Oem3);
 			Assert.AreEqual("ö", actual);
+			actual = User32.KeyCodeToUnicode(Key.Oem7);
+			Assert.AreEqual("ä", actual);
+			actual = User32.KeyCodeToUnicode(Key.Y);
+			Assert.AreEqual("y", actual);
 
-			try
+		}
+
+
+		CultureInfo _russian = CultureInfo.GetCultureInfo("ru-RU");
+		[TestMethod]
+		public void TestRussianKeyboard			()
+		{
+			CheckIfKeyboardLayoutIsInstalled(_russian);
+
+			var actual = User32.KeyCodeToUnicode(Key.Oem1);
+			Assert.AreEqual("ж", actual);
+			actual = User32.KeyCodeToUnicode(Key.Oem3);
+			Assert.AreEqual("ё", actual);
+			actual = User32.KeyCodeToUnicode(Key.Oem7);
+			Assert.AreEqual("э", actual);
+		}
+
+		CultureInfo _english = CultureInfo.GetCultureInfo("en-US");
+		[TestMethod]
+		public void TestEnglishKeyboard()
+		{
+			CheckIfKeyboardLayoutIsInstalled(_english);
+
+			var actual = User32.KeyCodeToUnicode(Key.Oem1);
+			Assert.AreEqual(";", actual);
+			actual = User32.KeyCodeToUnicode(Key.Oem3);
+			Assert.AreEqual("`", actual);
+			actual = User32.KeyCodeToUnicode(Key.Oem7);
+			Assert.AreEqual("'", actual);
+			actual = User32.KeyCodeToUnicode(Key.Y);
+			Assert.AreEqual("y", actual);
+		}
+
+		private static void CheckIfKeyboardLayoutIsInstalled(CultureInfo ci)
+		{
+			var msg = ci.Name + " keyboard (language) is not installed";
+			var il = InputLanguage.FromCulture(ci);
+
+			Assert.IsNotNull(il, msg);
+
+			var found = false;
+			foreach (var e in InputLanguage.InstalledInputLanguages)
+				if (il.Equals(e))
+				{
+					found = true;
+					break;
+				}
+
+			Assert.IsTrue(found, msg);
+
+			InputLanguage.CurrentInputLanguage = il;
+		}
+
+
+		[TestMethod]
+		public void HowToListAllEnumValues()
+		{
+			//e.g. for russian
+			InputLanguage.CurrentInputLanguage = InputLanguage.FromCulture(_russian);
+
+			var list = new Dictionary<string, Key>();
+			foreach (var e in Enum.GetValues<System.Windows.Input.Key>())
 			{
-				//var dict = new Dictionary<string, CultureInfo>();
-				//foreach (var ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
-				//{
-				//	dict.Add(ci.Name, ci);
-				//	if ("zh".Equals(ci.Name))
-				//	{
+				if (Enum.GetNames<System.Windows.Input.ModifierKeys>().Contains(e.ToString()))
+					continue;
 
-				//	}
-				//}
-				var kc = new KeysConverter(); 
-				string keyChar = kc.ConvertToString(System.Windows.Forms.Keys.Oem3);
-				keyChar = kc.ConvertToString(null,old,System.Windows.Forms.Keys.Oem3);
-
-				var kc2 = new KeyConverter();
-				string keyChar2 = kc.ConvertToString(Key.Oem3);
-				keyChar = kc.ConvertToString(null, old, Key.Oem3);
-
-
-
-
-				var ci = CultureInfo.GetCultureInfo("zh");
-				CultureInfo.CurrentCulture = ci;
-				CultureInfo.CurrentUICulture = ci;
-
-				actual = User32.KeyCodeToUnicode(System.Windows.Forms.Keys.Y);
-				Assert.AreEqual("y", actual);
-
-
-				ci = CultureInfo.GetCultureInfo("de");
-				CultureInfo.CurrentCulture = ci;
-				CultureInfo.CurrentUICulture = ci;
+				list[User32.KeyCodeToUnicode(e)] = e;
 			}
-			finally
-			{
-				CultureInfo.CurrentCulture = old;
-			}
+		}
 
-	
-
-			//		KeyboardLayoutId	7	int
-			//		LCID    7   int
-			//		"de".Equals(ci.Name)
-
-			//		KeyboardLayoutId	9	int
-			//		LCID    9   int
-			//		"en".Equals(ci.Name)
-
-			//		KeyboardLayoutId    8   int
-			//		LCID    8   int
-			//		Name    "el"    string
-
-			//		KeyboardLayoutId    30724   int
-			//		LCID    30724   int
-			//		Name    "zh"    string
-
-
-			
-
-	
-
+		[TestMethod]
+		public void HowToConvertWpfIntoWinformsAndBack()
+		{
+			var formsKey = Keys.Control;
+			var wpfKey = KeyInterop.KeyFromVirtualKey((int)formsKey);
+			wpfKey = System.Windows.Input.Key.A;
+			formsKey = (Keys)KeyInterop.VirtualKeyFromKey(wpfKey);
 		}
 
 	}
