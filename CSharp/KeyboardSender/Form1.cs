@@ -116,7 +116,7 @@ namespace KeyboardSender
                 //keep the key pressed for this many ms.  If you hold it down for a long time, it will activate the OS key repeat function
                 System.Threading.Thread.Sleep(50);
                 //we'll release the 'a' key by no longer including it in the pressed key list
-                Send(0, 0, 0, 0, 0, 0, 0, 0);
+                KeyReset();
             }
         }
 
@@ -138,7 +138,7 @@ namespace KeyboardSender
         {
             tmrRelease.Stop();
             //release all keys
-            Send(0, 0, 0, 0, 0, 0, 0, 0);
+            KeyReset();
         }
 
             private void button3_Click(object sender, EventArgs e)
@@ -154,13 +154,13 @@ namespace KeyboardSender
             //Send A
             Send(1, 0, 4, 0, 0, 0, 0, 0);
             System.Threading.Thread.Sleep(50);
-            Send(0, 0, 0, 0, 0, 0, 0, 0);
+            KeyReset();
             //wait a bit
             System.Threading.Thread.Sleep(50);
             //Send Delete
             Send(0, 0, 76, 0, 0, 0, 0, 0);
             System.Threading.Thread.Sleep(50);
-            Send(0, 0, 0, 0, 0, 0, 0, 0);
+            KeyReset();
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -169,17 +169,18 @@ namespace KeyboardSender
             var k1 = KeyboardUtils.GetKeyKeyCode("a");
             var k2 = KeyboardUtils.GetKeyKeyCode("b");
             if ((k1 > 0) && (k2 > 0))
-            {
-                //you can press up to six keys (not including modifiers) simultaneously.
-                Send(0, 0, k1, k2, 0, 0, 0, 0);
-                //keep the key pressed for this many ms.  If you hold it down for a long time, it will activate the OS key repeat function
-                System.Threading.Thread.Sleep(50);
-                //we'll release the 'a' and 'b' key by no longer including it in the pressed key list
-                Send(0, 0, 0, 0, 0, 0, 0, 0);
-            }
-        }
+			{
+				//you can press up to six keys (not including modifiers) simultaneously.
+				Send(0, 0, k1, k2, 0, 0, 0, 0);
+				//keep the key pressed for this many ms.  If you hold it down for a long time, it will activate the OS key repeat function
+				System.Threading.Thread.Sleep(50);
+				//we'll release the 'a' and 'b' key by no longer including it in the pressed key list
+				KeyReset();
+			}
+		}
 
-        private void button5_Click(object sender, EventArgs e)
+		private void KeyReset() => Send(0, 0, 0, 0, 0, 0, 0, 0);
+		private void button5_Click(object sender, EventArgs e)
         {
             SendText("Hello", 50, 100);
         }
@@ -233,7 +234,7 @@ namespace KeyboardSender
                     //keep the key pressed for this many ms.
                     System.Threading.Thread.Sleep(Down);
                     //release the key
-                    Send(0, 0, 0, 0, 0, 0, 0, 0);
+                    KeyReset();
                     //wait before sending the next key
                     System.Threading.Thread.Sleep(Interkey);
                 }
