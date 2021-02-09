@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Hvdk.Common
 {
@@ -168,9 +169,11 @@ namespace Hvdk.Common
 			if (key.Length == 1)
 				key = key.ToLower();
 			var i = FKeys.IndexOf(key);
-			if (i == -1) { return 0; } else { return (byte)i; };
-		}
+			if (i < 0)
+				throw new ArgumentOutOfRangeException(nameof(key), key);
 
+			return (byte)i;
+		}	
 	}
 }
 
