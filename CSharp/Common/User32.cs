@@ -41,6 +41,6 @@ namespace Hvdk.Common
 		static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
 		[DllImport(_user32Dll)]
-		static extern bool SetForegroundWindow(IntPtr hWnd);
+		public static extern bool SetForegroundWindow(IntPtr hWnd);
 	}
 }
