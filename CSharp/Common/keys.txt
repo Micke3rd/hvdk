@@ -1,0 +1,19 @@
+input ID and the output
+
+1  LeftCtrl
+2  LeftShift
+3  LeftCtrl + LeftShift
+4  System
+5  LeftCtrl + LeftAlt
+6  LeftShift + System
+7  LeftCtrl + LeftShift + LeftAlt
+8  LWin
+9  LeftCtrl + LWin
+10 LeftShift + LWin
+11 LeftCtrl + LeftShift + LWin
+12 System + System
+13 LeftCtrl + LeftAlt + LWin
+14 LeftShift + System + System
+15 LeftCtrl + LeftShift + LeftAlt + LWin
+
+and so on
